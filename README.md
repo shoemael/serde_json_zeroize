@@ -1,22 +1,31 @@
-# Serde JSON &emsp; [![Build Status]][actions] [![Latest Version]][crates.io]
+# Serde JSON Zeroize &emsp; [![Latest Version]][crates.io]
 
-[Build Status]: https://img.shields.io/github/actions/workflow/status/serde-rs/json/ci.yml?branch=master
-[actions]: https://github.com/serde-rs/json/actions?query=branch%3Amaster
-[Latest Version]: https://img.shields.io/crates/v/serde_json.svg
-[crates.io]: https://crates.io/crates/serde\_json
+[Latest Version]: https://img.shields.io/crates/v/serde_json_zeroize.svg
+[crates.io]: https://crates.io/crates/serde_json_zeroize
 
-**Serde is a framework for *ser*ializing and *de*serializing Rust data structures efficiently and generically.**
+**A zeroizing, drop-in replacement for `serde_json` with automatic memory scrubbing for high-assurance Rust applications.**
+
+> 🛡️ **Developed by the SpyVault Security Engineering Team**  
+> `serde_json_zeroize` extends standard `serde_json` with automatic zeroization (`memset` wiping) of lexer, reader, serializer, and string scratch buffers. It ensures intermediate heap allocations created during JSON parsing are scrubbed before `dealloc`.
 
 ---
 
 ```toml
 [dependencies]
-serde_json = "1.0"
+serde_json_zeroize = "1.0"
+```
+
+Or drop into existing projects as a transparent replacement:
+
+```toml
+[dependencies]
+serde_json = { package = "serde_json_zeroize", version = "1.0" }
 ```
 
 You may be looking for:
 
-- [JSON API documentation](https://docs.rs/serde_json)
+- [JSON API documentation](https://docs.rs/serde_json_zeroize)
+- [SpyVault Security Architecture](https://github.com/digitalgraffiti/SpyVault)
 - [Serde API documentation](https://docs.rs/serde)
 - [Detailed documentation about Serde](https://serde.rs/)
 - [Setting up `#[derive(Serialize, Deserialize)]`](https://serde.rs/derive.html)
