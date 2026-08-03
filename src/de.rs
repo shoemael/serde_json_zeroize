@@ -67,6 +67,29 @@ where
             disable_recursion_limit: false,
         }
     }
+
+    #[inline]
+    fn clear_scratch(&mut self) {
+        #[cfg(feature = "zeroize")]
+        {
+            use zeroize::Zeroize;
+            self.scratch.zeroize();
+        }
+        #[cfg(not(feature = "zeroize"))]
+        {
+            self.scratch.clear();
+        }
+    }
+}
+
+impl<R> Drop for Deserializer<R> {
+    fn drop(&mut self) {
+        #[cfg(feature = "zeroize")]
+        {
+            use zeroize::Zeroize;
+            self.scratch.zeroize();
+        }
+    }
 }
 
 #[cfg(feature = "std")]
@@ -302,7 +325,7 @@ impl<'de, R: Read<'de>> Deserializer<R> {
             },
             b'"' => {
                 self.eat_char();
-                self.scratch.clear();
+                self.clear_scratch();
                 match self.read.parse_str(&mut self.scratch) {
                     Ok(s) => de::Error::invalid_type(Unexpected::Str(&s), exp),
                     Err(err) => return err,
@@ -687,7 +710,7 @@ impl<'de, R: Read<'de>> Deserializer<R> {
         // first requirement is already handled by the integer parsing logic.
         // The second requirement will be enforced just before passing the
         // slices to lexical in f64_long_from_parts.
-        self.scratch.clear();
+        self.clear_scratch();
         self.scratch
             .extend_from_slice(itoa::Buffer::new().format(partial_significand).as_bytes());
 
@@ -822,7 +845,7 @@ impl<'de, R: Read<'de>> Deserializer<R> {
         let mut buffer = itoa::Buffer::new();
         let significand = buffer.format(significand);
         let fraction_digits = -exponent as usize;
-        self.scratch.clear();
+        self.clear_scratch();
         if let Some(zeros) = fraction_digits.checked_sub(significand.len() + 1) {
             self.scratch.extend(iter::repeat(b'0').take(zeros + 1));
         }
@@ -1100,7 +1123,7 @@ impl<'de, R: Read<'de>> Deserializer<R> {
     }
 
     fn ignore_value(&mut self) -> Result<()> {
-        self.scratch.clear();
+        self.clear_scratch();
         let mut enclosing = None;
 
         loop {
@@ -1424,7 +1447,7 @@ impl<'de, R: Read<'de>> de::Deserializer<'de> for &mut Deserializer<R> {
             b'0'..=b'9' => tri!(self.parse_any_number(true)).visit(visitor),
             b'"' => {
                 self.eat_char();
-                self.scratch.clear();
+                self.clear_scratch();
                 match tri!(self.read.parse_str(&mut self.scratch)) {
                     Reference::Borrowed(s) => visitor.visit_borrowed_str(s),
                     Reference::Copied(s) => visitor.visit_str(s),
@@ -1535,7 +1558,7 @@ impl<'de, R: Read<'de>> de::Deserializer<'de> for &mut Deserializer<R> {
         let value = match peek {
             b'"' => {
                 self.eat_char();
-                self.scratch.clear();
+                self.clear_scratch();
                 match tri!(self.read.parse_str(&mut self.scratch)) {
                     Reference::Borrowed(s) => visitor.visit_borrowed_str(s),
                     Reference::Copied(s) => visitor.visit_str(s),
@@ -1644,7 +1667,7 @@ impl<'de, R: Read<'de>> de::Deserializer<'de> for &mut Deserializer<R> {
         let value = match peek {
             b'"' => {
                 self.eat_char();
-                self.scratch.clear();
+                self.clear_scratch();
                 match tri!(self.read.parse_str_raw(&mut self.scratch)) {
                     Reference::Borrowed(b) => visitor.visit_borrowed_bytes(b),
                     Reference::Copied(b) => visitor.visit_bytes(b),
@@ -2217,7 +2240,7 @@ where
         V: de::Visitor<'de>,
     {
         self.de.eat_char();
-        self.de.scratch.clear();
+        self.de.clear_scratch();
         match tri!(self.de.read.parse_str(&mut self.de.scratch)) {
             Reference::Borrowed(s) => visitor.visit_borrowed_str(s),
             Reference::Copied(s) => visitor.visit_str(s),
@@ -2263,7 +2286,7 @@ where
                 visitor.visit_bool(false)
             }
             _ => {
-                self.de.scratch.clear();
+                self.de.clear_scratch();
                 let s = tri!(self.de.read.parse_str(&mut self.de.scratch));
                 Err(de::Error::invalid_type(Unexpected::Str(&s), &visitor))
             }

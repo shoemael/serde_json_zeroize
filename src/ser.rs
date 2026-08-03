@@ -2215,7 +2215,14 @@ where
     T: ?Sized + Serialize,
 {
     let mut writer = Vec::with_capacity(128);
-    tri!(to_writer(&mut writer, value));
+    if let Err(err) = to_writer(&mut writer, value) {
+        #[cfg(feature = "zeroize")]
+        {
+            use zeroize::Zeroize;
+            writer.zeroize();
+        }
+        return Err(err);
+    }
     Ok(writer)
 }
 
@@ -2231,7 +2238,14 @@ where
     T: ?Sized + Serialize,
 {
     let mut writer = Vec::with_capacity(128);
-    tri!(to_writer_pretty(&mut writer, value));
+    if let Err(err) = to_writer_pretty(&mut writer, value) {
+        #[cfg(feature = "zeroize")]
+        {
+            use zeroize::Zeroize;
+            writer.zeroize();
+        }
+        return Err(err);
+    }
     Ok(writer)
 }
 

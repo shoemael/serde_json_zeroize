@@ -1,13 +1,13 @@
 [package]
-name = "serde_json"
+name = "serde_json_zeroize"
 version = "1.0.151"
 categories = ["encoding", "parser-implementations", "no-std"]
-description = "A JSON serialization file format"
-documentation = "https://docs.rs/serde_json"
+description = "A zeroizing JSON serialization file format with automatic memory scrubbing"
+documentation = "https://docs.rs/serde_json_zeroize"
 edition = "2021"
-keywords = ["json", "serde", "serialization"]
+keywords = ["json", "serde", "serialization", "zeroize", "security"]
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/serde-rs/json"
+repository = "https://github.com/shoemael/serde_json_zeroize"
 rust-version = "1.71"
 
 [dependencies]
@@ -16,6 +16,7 @@ itoa = "1.0"
 memchr = { version = "2", default-features = false }
 serde_core = { version = "1.0.220", default-features = false }
 zmij = "1.0"
+zeroize = { version = "1.8", default-features = false, optional = true }
 
 [target.'cfg(any())'.dependencies]
 serde = { version = "1.0.220", default-features = false }
@@ -32,7 +33,7 @@ serde_stacker = "0.1.8"
 trybuild = { version = "1.0.108", features = ["diff"] }
 
 [package.metadata.docs.rs]
-features = ["preserve_order", "raw_value", "unbounded_depth"]
+features = ["preserve_order", "raw_value", "unbounded_depth", "zeroize"]
 targets = ["x86_64-unknown-linux-gnu"]
 rustdoc-args = [
     "--generate-link-to-definition",
@@ -43,13 +44,13 @@ rustdoc-args = [
 ]
 
 [package.metadata.playground]
-features = ["float_roundtrip", "raw_value", "unbounded_depth"]
+features = ["float_roundtrip", "raw_value", "unbounded_depth", "zeroize"]
 
 
 ### FEATURES #################################################################
 
 [features]
-default = ["std"]
+default = ["std", "zeroize"]
 
 std = ["memchr/std", "serde_core/std"]
 
@@ -57,6 +58,9 @@ std = ["memchr/std", "serde_core/std"]
 # rest of the Rust standard library.
 # NOTE: Disabling both `std` *and* `alloc` features is not supported yet.
 alloc = ["serde_core/alloc"]
+
+# Automatically scrub intermediate heap scratch buffers during parsing and serialization.
+zeroize = ["dep:zeroize", "zeroize/alloc"]
 
 # Make serde_json::Map use a representation which maintains insertion order.
 # This allows data to be read into a Value and written back to a JSON string
