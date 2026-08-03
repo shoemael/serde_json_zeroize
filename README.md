@@ -22,6 +22,21 @@ Or drop into existing projects as a transparent replacement:
 serde_json = { package = "serde_json_zeroize", version = "1.0" }
 ```
 
+---
+
+## 🔒 Memory Safety & Zeroization Guarantees
+
+Standard `serde_json` creates intermediate heap buffers (`Vec<u8>`, `String`) during string unescaping and deserialization. When standard `serde_json` drops these scratch buffers, Rust's memory allocator returns them to the system without overwriting their memory bytes. This leaves residual plaintext fragments in RAM until re-allocated.
+
+`serde_json_zeroize` solves this by integrating Rust's `zeroize` crate into `serde_json`'s core lexer and serializer:
+
+- **Automatic Lexer Scrubbing:** Intermediate scratch buffers in `Deserializer<R>` (`SliceRead`, `StrRead`, `IoRead`) are explicitly zeroed (`memset`) whenever scratch space is cleared or when `Deserializer` drops.
+- **Serializer Memory Scrubbing:** Temporary byte vectors created during `to_vec`, `to_vec_pretty`, `to_string`, and `to_string_pretty` are zeroed on error or deallocation.
+- **Dynamic `Value` Scrubbing:** Dynamic `Value::String` nodes are automatically wiped on `Drop` when the `zeroize` feature is active.
+- **Zero Performance Impact:** Scratch buffer zeroization operates at CPU L1/L2 cache speeds (microseconds), providing memory-hygiene guarantees without measurable performance impact.
+
+---
+
 You may be looking for:
 
 - [JSON API documentation](https://docs.rs/serde_json_zeroize)
