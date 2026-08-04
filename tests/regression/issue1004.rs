@@ -1,5 +1,7 @@
 #![cfg(feature = "arbitrary_precision")]
 
+extern crate serde_json_zeroize as serde_json;
+
 #[test]
 fn test() {
     let float = 5.55f32;

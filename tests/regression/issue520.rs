@@ -1,5 +1,7 @@
 #![allow(clippy::float_cmp)]
 
+extern crate serde_json_zeroize as serde_json;
+
 use serde_derive::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]

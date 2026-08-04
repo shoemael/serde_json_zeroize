@@ -18,6 +18,8 @@
     clippy::zero_sized_map_values
 )]
 
+extern crate serde_json_zeroize as serde_json;
+
 #[macro_use]
 mod macros;
 

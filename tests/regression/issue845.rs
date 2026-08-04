@@ -1,5 +1,7 @@
 #![allow(clippy::trait_duplication_in_bounds)] // https://github.com/rust-lang/rust-clippy/issues/8757
 
+extern crate serde_json_zeroize as serde_json;
+
 use serde::{Deserialize, Deserializer};
 use std::fmt::{self, Display};
 use std::marker::PhantomData;

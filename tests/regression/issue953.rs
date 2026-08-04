@@ -1,3 +1,4 @@
+extern crate serde_json_zeroize as serde_json;
 use serde_json::Value;
 
 #[test]

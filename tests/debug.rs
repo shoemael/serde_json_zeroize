@@ -1,5 +1,6 @@
 #![allow(clippy::uninlined_format_args)]
 
+extern crate serde_json_zeroize as serde_json;
 use indoc::indoc;
 use serde_json::{json, Number, Value};
 

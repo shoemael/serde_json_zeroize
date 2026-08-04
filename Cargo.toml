@@ -22,6 +22,7 @@ zeroize = { version = "1.8", default-features = false, optional = true }
 serde = { version = "1.0.220", default-features = false }
 
 [dev-dependencies]
+serde_json = { package = "serde_json_zeroize", path = "." }
 automod = "1.0.11"
 indoc = "2.0.2"
 ref-cast = "1.0.18"

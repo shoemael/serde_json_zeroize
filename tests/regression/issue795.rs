@@ -1,5 +1,7 @@
 #![allow(clippy::assertions_on_result_states)]
 
+extern crate serde_json_zeroize as serde_json;
+
 use serde::de::{
     Deserialize, Deserializer, EnumAccess, IgnoredAny, MapAccess, VariantAccess, Visitor,
 };
