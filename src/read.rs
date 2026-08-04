@@ -211,6 +211,11 @@ where
 impl<R> private::Sealed for IoRead<R> where R: io::Read {}
 
 #[cfg(all(feature = "std", feature = "zeroize"))]
+/// Ensures that the internal raw buffer is securely scrubbed when the reader is dropped.
+///
+/// Standard IO reads can leave fragments of plaintext JSON in the internal buffer used
+/// for decoding and unescaping. This `Drop` implementation guarantees that any residual
+/// data within the reader's buffer is overwritten with zeroes before the memory is released.
 impl<R> Drop for IoRead<R>
 where
     R: io::Read,

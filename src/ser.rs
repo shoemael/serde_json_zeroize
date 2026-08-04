@@ -2303,7 +2303,11 @@ where
 
 /// Serialize the given data structure as a zeroizing JSON byte vector.
 #[cfg(feature = "zeroize")]
-#[inline]
+/// Serialize the given data structure as a JSON byte vector that will be zeroized on drop.
+///
+/// This function behaves identically to `to_vec`, but it wraps the returned `Vec<u8>` in
+/// a `Zeroizing` container. This ensures that the serialized JSON text, which may contain
+/// sensitive information, is explicitly scrubbed from memory when the vector goes out of scope.
 pub fn to_zeroizing_vec<T>(value: &T) -> Result<zeroize::Zeroizing<Vec<u8>>>
 where
     T: ?Sized + Serialize,
@@ -2313,7 +2317,11 @@ where
 
 /// Serialize the given data structure as a zeroizing pretty-printed JSON byte vector.
 #[cfg(feature = "zeroize")]
-#[inline]
+/// Serialize the given data structure as a pretty-printed JSON byte vector that will be zeroized on drop.
+///
+/// This function behaves identically to `to_vec_pretty`, but it wraps the returned `Vec<u8>` in
+/// a `Zeroizing` container. This ensures that the serialized JSON text, which may contain
+/// sensitive information, is explicitly scrubbed from memory when the vector goes out of scope.
 pub fn to_zeroizing_vec_pretty<T>(value: &T) -> Result<zeroize::Zeroizing<Vec<u8>>>
 where
     T: ?Sized + Serialize,
@@ -2323,7 +2331,11 @@ where
 
 /// Serialize the given data structure as a zeroizing String of JSON.
 #[cfg(feature = "zeroize")]
-#[inline]
+/// Serialize the given data structure as a String of JSON that will be zeroized on drop.
+///
+/// This function behaves identically to `to_string`, but it wraps the returned `String` in
+/// a `Zeroizing` container. This ensures that the serialized JSON text, which may contain
+/// sensitive information, is explicitly scrubbed from memory when the string goes out of scope.
 pub fn to_zeroizing_string<T>(value: &T) -> Result<zeroize::Zeroizing<String>>
 where
     T: ?Sized + Serialize,
@@ -2333,7 +2345,11 @@ where
 
 /// Serialize the given data structure as a zeroizing pretty-printed String of JSON.
 #[cfg(feature = "zeroize")]
-#[inline]
+/// Serialize the given data structure as a pretty-printed String of JSON that will be zeroized on drop.
+///
+/// This function behaves identically to `to_string_pretty`, but it wraps the returned `String` in
+/// a `Zeroizing` container. This ensures that the serialized JSON text, which may contain
+/// sensitive information, is explicitly scrubbed from memory when the string goes out of scope.
 pub fn to_zeroizing_string_pretty<T>(value: &T) -> Result<zeroize::Zeroizing<String>>
 where
     T: ?Sized + Serialize,

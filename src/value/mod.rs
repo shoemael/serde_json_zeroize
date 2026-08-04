@@ -176,6 +176,13 @@ pub enum Value {
 }
 
 #[cfg(feature = "zeroize")]
+/// Implements recursive zeroization for the untyped JSON `Value` tree.
+///
+/// When the `zeroize` feature is enabled, explicitly calling `.zeroize()` (or dropping a
+/// zeroizing wrapper) will recursively traverse the JSON tree and overwrite all `String`
+/// contents, `Array` elements, and `Object` key-value pairs with zeroes. This ensures
+/// that any sensitive data stored in the JSON representation is securely wiped from memory
+/// before deallocation.
 impl zeroize::Zeroize for Value {
     fn zeroize(&mut self) {
         match self {

@@ -36,6 +36,11 @@ type MapImpl<K, V> = BTreeMap<K, V>;
 type MapImpl<K, V> = IndexMap<K, V>;
 
 #[cfg(feature = "zeroize")]
+/// Implements recursive zeroization for the underlying JSON map.
+///
+/// When the `zeroize` feature is enabled, this implementation recursively zeroizes
+/// all keys and values contained within the map. This is typically invoked automatically
+/// via the `Value` zeroize implementation or when the `Map` is dropped inside a zeroizing wrapper.
 impl<K, V> zeroize::Zeroize for Map<K, V>
 where
     K: zeroize::Zeroize,
