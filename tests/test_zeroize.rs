@@ -25,3 +25,18 @@ fn test_zeroize_value_deserialization() {
     let v: serde_json_zeroize::Value = serde_json_zeroize::from_str(json_data).expect("Value deserialization failed");
     assert_eq!(v["key"], "value_with_escape_\t_char");
 }
+
+#[test]
+fn test_zeroizing_helpers() {
+    let data = SensitiveData {
+        username: "admin".to_string(),
+        secret: "p@ssword".to_string(),
+    };
+
+    let z_str = serde_json_zeroize::to_zeroizing_string(&data).unwrap();
+    assert!(z_str.contains("admin"));
+
+    let z_vec = serde_json_zeroize::to_zeroizing_vec(&data).unwrap();
+    assert!(z_vec.starts_with(b"{"));
+}
+

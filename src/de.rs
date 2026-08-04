@@ -59,7 +59,7 @@ where
     pub fn new(read: R) -> Self {
         Deserializer {
             read,
-            scratch: Vec::new(),
+            scratch: Vec::with_capacity(1024),
             remaining_depth: 128,
             #[cfg(feature = "float_roundtrip")]
             single_precision: false,

@@ -2287,6 +2287,46 @@ where
     Ok(string)
 }
 
+/// Serialize the given data structure as a zeroizing JSON byte vector.
+#[cfg(feature = "zeroize")]
+#[inline]
+pub fn to_zeroizing_vec<T>(value: &T) -> Result<zeroize::Zeroizing<Vec<u8>>>
+where
+    T: ?Sized + Serialize,
+{
+    to_vec(value).map(zeroize::Zeroizing::new)
+}
+
+/// Serialize the given data structure as a zeroizing pretty-printed JSON byte vector.
+#[cfg(feature = "zeroize")]
+#[inline]
+pub fn to_zeroizing_vec_pretty<T>(value: &T) -> Result<zeroize::Zeroizing<Vec<u8>>>
+where
+    T: ?Sized + Serialize,
+{
+    to_vec_pretty(value).map(zeroize::Zeroizing::new)
+}
+
+/// Serialize the given data structure as a zeroizing String of JSON.
+#[cfg(feature = "zeroize")]
+#[inline]
+pub fn to_zeroizing_string<T>(value: &T) -> Result<zeroize::Zeroizing<String>>
+where
+    T: ?Sized + Serialize,
+{
+    to_string(value).map(zeroize::Zeroizing::new)
+}
+
+/// Serialize the given data structure as a zeroizing pretty-printed String of JSON.
+#[cfg(feature = "zeroize")]
+#[inline]
+pub fn to_zeroizing_string_pretty<T>(value: &T) -> Result<zeroize::Zeroizing<String>>
+where
+    T: ?Sized + Serialize,
+{
+    to_string_pretty(value).map(zeroize::Zeroizing::new)
+}
+
 fn indent<W>(wr: &mut W, n: usize, s: &[u8]) -> io::Result<()>
 where
     W: ?Sized + io::Write,

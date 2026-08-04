@@ -398,6 +398,10 @@ pub use crate::de::{from_slice, from_str, Deserializer, StreamDeserializer};
 pub use crate::error::{Error, Result};
 #[doc(inline)]
 pub use crate::ser::{to_string, to_string_pretty, to_vec, to_vec_pretty};
+#[cfg(feature = "zeroize")]
+pub use crate::ser::{
+    to_zeroizing_string, to_zeroizing_string_pretty, to_zeroizing_vec, to_zeroizing_vec_pretty,
+};
 #[cfg(feature = "std")]
 #[cfg_attr(docsrs, doc(cfg(feature = "std")))]
 #[doc(inline)]
