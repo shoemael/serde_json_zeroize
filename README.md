@@ -5,7 +5,7 @@
 
 **A zeroizing, drop-in replacement for `serde_json` with automatic memory scrubbing for high-assurance Rust applications.**
 
-> 🛡️ **Developed by the SpyVault Security Engineering Team**  
+> 🛡️ **Updated for memory zeroing by the SpyVault Security Engineering Team**  
 > `serde_json_zeroize` extends standard `serde_json` with automatic zeroization (`memset` wiping) of lexer, reader, serializer, and string scratch buffers. It ensures intermediate heap allocations created during JSON parsing are scrubbed before `dealloc`.
 
 ---
@@ -30,9 +30,9 @@ Standard `serde_json` creates intermediate heap buffers (`Vec<u8>`, `String`) du
 
 `serde_json_zeroize` solves this by integrating Rust's `zeroize` crate into `serde_json`'s core lexer and serializer:
 
-- **Automatic Lexer Scrubbing:** Intermediate scratch buffers in `Deserializer<R>` (`SliceRead`, `StrRead`, `IoRead`) are explicitly zeroed (`memset`) whenever scratch space is cleared or when `Deserializer` drops.
-- **Serializer Memory Scrubbing:** Temporary byte vectors created during `to_vec`, `to_vec_pretty`, `to_string`, and `to_string_pretty` are zeroed on error or deallocation.
-- **Dynamic `Value` Scrubbing:** Dynamic `Value::String` nodes are automatically wiped on `Drop` when the `zeroize` feature is active.
+- **Automatic Lexer Scrubbing:** Intermediate scratch buffers in `Deserializer<R>` (`SliceRead`, `StrRead`, `IoRead`) and internal raw read buffers are explicitly zeroed (`memset`) whenever scratch space is cleared or when readers drop.
+- **Serializer Memory & Stack Scrubbing:** Temporary byte vectors created during serialization (`to_vec`, `to_string`, etc.) and internal stack buffers (e.g., during float formatting) are explicitly zeroed on error or before return/deallocation.
+- **Dynamic `Value` Scrubbing:** The entire untyped JSON tree (`Value` and `Map<String, Value>`) implements recursive zeroization. Dropping a JSON `Value` automatically zeroes all nested strings, object keys, array elements, and maps before memory is returned to the allocator (when the `zeroize` feature is active).
 - **Zero Performance Impact:** Scratch buffer zeroization operates at CPU L1/L2 cache speeds (microseconds), providing memory-hygiene guarantees without measurable performance impact.
 
 ---
