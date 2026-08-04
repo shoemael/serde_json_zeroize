@@ -210,6 +210,20 @@ where
 #[cfg(feature = "std")]
 impl<R> private::Sealed for IoRead<R> where R: io::Read {}
 
+#[cfg(all(feature = "std", feature = "zeroize"))]
+impl<R> Drop for IoRead<R>
+where
+    R: io::Read,
+{
+    fn drop(&mut self) {
+        #[cfg(feature = "raw_value")]
+        if let Some(buf) = &mut self.raw_buffer {
+            use zeroize::Zeroize;
+            buf.zeroize();
+        }
+    }
+}
+
 #[cfg(feature = "std")]
 impl<R> IoRead<R>
 where

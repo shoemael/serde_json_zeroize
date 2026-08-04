@@ -175,6 +175,32 @@ pub enum Value {
     Object(Map<String, Value>),
 }
 
+#[cfg(feature = "zeroize")]
+impl zeroize::Zeroize for Value {
+    fn zeroize(&mut self) {
+        match self {
+            Value::Null => {}
+            Value::Bool(b) => {
+                b.zeroize();
+            }
+            Value::Number(_n) => {}
+            Value::String(s) => {
+                s.zeroize();
+            }
+            Value::Array(vec) => {
+                for item in vec.iter_mut() {
+                    item.zeroize();
+                }
+                vec.clear();
+            }
+            Value::Object(map) => {
+                map.zeroize();
+            }
+        }
+        *self = Value::Null;
+    }
+}
+
 impl Debug for Value {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         match self {

@@ -40,3 +40,14 @@ fn test_zeroizing_helpers() {
     assert!(z_vec.starts_with(b"{"));
 }
 
+#[test]
+fn test_value_and_map_zeroize() {
+    use zeroize::Zeroize;
+
+    let mut val: serde_json_zeroize::Value = serde_json_zeroize::from_str(r#"{"secret": "sensitive_data"}"#).unwrap();
+    assert_eq!(val["secret"], "sensitive_data");
+
+    val.zeroize();
+    assert_eq!(val, serde_json_zeroize::Value::Null);
+}
+

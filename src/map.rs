@@ -35,6 +35,22 @@ type MapImpl<K, V> = BTreeMap<K, V>;
 #[cfg(feature = "preserve_order")]
 type MapImpl<K, V> = IndexMap<K, V>;
 
+#[cfg(feature = "zeroize")]
+impl<K, V> zeroize::Zeroize for Map<K, V>
+where
+    K: zeroize::Zeroize,
+    V: zeroize::Zeroize,
+{
+    fn zeroize(&mut self) {
+        for (k, v) in self.map.iter_mut() {
+            let k_mut = unsafe { (k as *const K as *mut K).as_mut().unwrap() };
+            k_mut.zeroize();
+            v.zeroize();
+        }
+        self.map.clear();
+    }
+}
+
 impl Map<String, Value> {
     /// Makes a new empty Map.
     #[inline]

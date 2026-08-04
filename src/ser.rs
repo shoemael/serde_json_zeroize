@@ -1694,7 +1694,14 @@ pub trait Formatter {
     {
         let mut buffer = zmij::Buffer::new();
         let s = buffer.format_finite(value);
-        writer.write_all(s.as_bytes())
+        let res = writer.write_all(s.as_bytes());
+        #[cfg(feature = "zeroize")]
+        {
+            use zeroize::Zeroize;
+            let bytes = unsafe { core::slice::from_raw_parts_mut(&mut buffer as *mut _ as *mut u8, core::mem::size_of_val(&buffer)) };
+            bytes.zeroize();
+        }
+        res
     }
 
     /// Writes a floating point value like `-31.26e+12` to the specified writer.
@@ -1719,7 +1726,14 @@ pub trait Formatter {
     {
         let mut buffer = zmij::Buffer::new();
         let s = buffer.format_finite(value);
-        writer.write_all(s.as_bytes())
+        let res = writer.write_all(s.as_bytes());
+        #[cfg(feature = "zeroize")]
+        {
+            use zeroize::Zeroize;
+            let bytes = unsafe { core::slice::from_raw_parts_mut(&mut buffer as *mut _ as *mut u8, core::mem::size_of_val(&buffer)) };
+            bytes.zeroize();
+        }
+        res
     }
 
     /// Writes a number that has already been rendered to a string.
